@@ -62,7 +62,52 @@ export default function Experiment() {
         />
       </Box>
 
+      {/* current weather */}
+      <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+        <Grid
+          container
+          spacing={2}
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-start"
+        >
+          {/* temp box */}
+          <Grid item>
+            <Box component="div" sx={{ p: 2, border: '1px dashed grey' }}>
+              <Typography variant="subtitle2" gutterBottom>
+                March 9, 11:34 AM
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                Day 47&deg;F &uarr; &bull; Night 39&deg;F &darr;
+              </Typography>
+              <Typography variant="h2" gutterBottom>
+                42&deg;F
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                Humidity 72%
+              </Typography>
+            </Box>
+          </Grid>
 
+          {/* weather icon box */}
+          <Grid item>
+            <Box component="div" sx={{ p: 2, border: '1px dashed grey' }}>
+              <Image
+                src="/images/cloud.png"
+                alt="weather icon"
+                width={100}
+                height={100}
+              />
+              <Typography variant="body2" gutterBottom>
+                Cloudy
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                Wind 5 mph
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
     </Container>
   );
 }
