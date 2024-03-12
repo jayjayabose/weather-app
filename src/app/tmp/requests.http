@@ -28,7 +28,7 @@ X-RapidAPI-Key: 9264137acbmsh705fcae31d728c1p1b79a4jsn528f649e08b5
 X-RapidAPI-Host: wft-geo-db.p.rapidapi.com
 
 ### `${GEO_API_URL}/cities?minPopulation=1000000&namePrefix=${inputValue}`,
-GET https://wft-geo-db.p.rapidapi.com/v1/geo/cities?minPopulation=0&namePrefix=millwood
+GET https://wft-geo-db.p.rapidapi.com/v1/geo/cities?minPopulation=0&namePrefix=lon
 X-RapidAPI-Key: 9264137acbmsh705fcae31d728c1p1b79a4jsn528f649e08b5
 X-RapidAPI-Host: wft-geo-db.p.rapidapi.com
 
