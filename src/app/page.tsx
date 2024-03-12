@@ -15,6 +15,7 @@ export default function App() {
   let [currentWeather, setCurrentWeather] =
     useState<CurrentWeather>(currentData);
   let [dailyWeather, setDailyWeather] = useState<DailyWeather>(dailyData);
+  let [tempUnits, setTempUnits] = useState<'imperial' | 'metric'>('imperial');
 
   const handleSearch = async (event: Event) => {
     event.preventDefault();
@@ -30,11 +31,20 @@ export default function App() {
     }
   };
 
+  const handleToggleTempUnits = () => {
+    console.log('app handleToggleTempUnits', tempUnits)
+    if (tempUnits === 'imperial') {
+      setTempUnits('metric');
+    } else {  // note: assume the only two options are 'imperial' and 'metric'
+      setTempUnits('imperial');
+    }
+  }
+
   return (
     <Container maxWidth="md">
-      <Search onSearch={handleSearch} />
-      <Current currentWeather={currentWeather} />
-      <Daily dailyWeather={dailyWeather} />
+      <Search onSearch={handleSearch} onToggleTempUnits={handleToggleTempUnits}/>
+      <Current currentWeather={currentWeather} tempUnits={tempUnits}/>
+      <Daily dailyWeather={dailyWeather} tempUnits={tempUnits}/>
       {/* note: type warning above */}
     </Container>
   );

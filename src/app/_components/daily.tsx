@@ -4,16 +4,18 @@ import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 
 import { DailyWeather } from '../_types/weather';
+import { displayTempNumber } from '../_utils/services';
 
 type DailyProps = {
   dailyWeather: DailyWeather[];
+  tempUnits: String;
 };
 
-export default function Daily({ dailyWeather }: DailyProps) {
+export default function Daily({ dailyWeather, tempUnits }: DailyProps) {
   return (
     <>
       <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-        {dailyWeather.map((day, index) => <Day key={day.dt} weather={day}/>)}
+        {dailyWeather.map((day, index) => <Day key={day.dt} weather={day} tempUnits={tempUnits}/>)}
       </Box>
     </>
   );
@@ -21,9 +23,10 @@ export default function Daily({ dailyWeather }: DailyProps) {
 
 type DayProps = {
   weather: DailyWeather;
+  tempUnits: String;
 };
 
-function Day({ weather }: DayProps) {
+function Day({ weather, tempUnits }: DayProps) {
   const date = new Date(weather.dt * 1000);
   const formattedDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
   const iconUrl = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
@@ -71,10 +74,12 @@ function Day({ weather }: DayProps) {
             </Box>
             <Box component="div" id="temperature-container" sx={{ ml: 2 }}>
               <Typography variant="subtitle2" gutterBottom>
-                {weather.temp.max}&deg;
+                {/* {weather.temp.max}&deg; */}
+                {displayTempNumber(weather.temp.max, tempUnits)}&deg;
               </Typography>
               <Typography variant="body2" gutterBottom>
-              {weather.temp.min}&deg;
+              {/* {weather.temp.min}&deg; */}
+              {displayTempNumber(weather.temp.min, tempUnits)}&deg;
               </Typography>
             </Box>
           </Box>

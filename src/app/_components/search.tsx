@@ -5,17 +5,20 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 type SearchProps = {
-  onSearch: (event: Event) => Promise<void>;
+  onSearch: (event: Event) => Promise<void>,
+  onToggleTempUnits: () => void;
 };
 
-export default function Search({ onSearch }: SearchProps) {
+export default function Search({ onSearch, onToggleTempUnits }: SearchProps) {
   let [searchTerm, setSearchTerm] = useState<string>('');
 
   return (
     <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-      <form onSubmit={onSearch}>
+      <Box component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+      <form onSubmit={onSearch} style={{ flex: 1 }}>
         <TextField
           name="search-term"
           variant="outlined"
@@ -36,6 +39,10 @@ export default function Search({ onSearch }: SearchProps) {
           }}
         />
       </form>
+      <IconButton onClick={onToggleTempUnits}>
+        <MoreVertIcon />
+      </IconButton>
+      </Box>
     </Box>
   );
 }
