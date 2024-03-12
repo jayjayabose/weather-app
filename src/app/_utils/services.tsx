@@ -4,6 +4,19 @@ const API_PATH_LAT_LON = process.env.NEXT_PUBLIC_API_PATH_LAT_LON;
 const API_PATH_GEO = process.env.NEXT_PUBLIC_API_PATH_GEO;
 const GEO_RESULT_LIMIT = process.env.NEXT_PUBLIC_GEO_RESULT_LIMIT;;
 
+function displayTempNumber (temp: number, units: String) {
+  if (units === 'imperial') {
+    // round to nearest whole number
+
+    return Math.round(temp);
+  } else {
+    return Math.round(((temp - 32) * 5) / 9);
+  }
+};
+
+function displayTempUnit (tempUnits: String) {
+  return tempUnits === 'imperial' ? 'F' : 'C'
+}
 
 function isPlaceName(searchTerm: string) {
   if (searchTerm.match(/^[^\d]+$/)) { // if the search term contains no digits
@@ -35,7 +48,7 @@ async function fetchWeather(searchTerm: string) {
     [lat, lon] = searchTerm.split(' '); // assume lat and lon are separated by a space
   }
 
-  const url = `${API_BASE}/${API_PATH_LAT_LON}?lat=${lat}&lon=${lon}&exclude=minutely,hourly&appid=${API_KEY}`;
+  const url = `${API_BASE}/${API_PATH_LAT_LON}?lat=${lat}&lon=${lon}&units=imperial&exclude=minutely,hourly&appid=${API_KEY}`;
 
   try {
     let response = await fetch(url);
@@ -63,5 +76,5 @@ async function fetchWeather(searchTerm: string) {
 }
 
 export {
-  fetchWeather
+  fetchWeather, displayTempNumber, displayTempUnit
 }

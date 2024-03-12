@@ -1,12 +1,14 @@
 import { Box, Grid, Typography } from '@mui/material';
 import Image from 'next/image';
 import { CurrentWeather } from '../_types/weather';
+import { displayTempNumber, displayTempUnit } from '../_utils/services';
 
 type CurrentProps = {
   currentWeather: CurrentWeather;
+  tempUnits: String;
 };
 
-export default function Current({ currentWeather }: CurrentProps) {
+export default function Current({ currentWeather, tempUnits }: CurrentProps) {
   const date = new Date();
   const formattedDate = date
     .toLocaleString('en-US', {
@@ -41,7 +43,7 @@ export default function Current({ currentWeather }: CurrentProps) {
         {/* box: temperature */}
         <Grid item>
           <Box component="div" sx={{ p: 2, border: '1px dashed grey' }}>
-            <Typography variant="h1">{currentWeather.temp}&deg;F</Typography>
+            <Typography variant="h1">{displayTempNumber(currentWeather.temp, tempUnits)}&deg;{displayTempUnit(tempUnits)}</Typography>
           </Box>
         </Grid>
 
