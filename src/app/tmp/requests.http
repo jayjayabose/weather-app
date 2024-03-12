@@ -1,0 +1,36 @@
+### OPEN WEATHER MAP API
+# apiKey: 9c7d098bf93aebd491e1ddf7e9ecbb92
+# Learn more here https://openweathermap.org/price. 
+# how to make an API call
+# http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
+
+
+### FORECAST API: I: lat / lon
+GET https://api.openweathermap.org/data/3.0/onecall?lat=33.44&lon=-94.04&exclude=minutely,hourly&appid=9c7d098bf93aebd491e1ddf7e9ecbb92
+
+
+### GEOCODING API: // direct geocoding: I: name or zip O: lat / lon
+### New York, NY, US
+GET http://api.openweathermap.org/geo/1.0/direct?q=New%20York%2CNY%2CUS&limit=5&appid=9c7d098bf93aebd491e1ddf7e9ecbb92
+
+### GEOCODING API: // direct geocoding: I: name or zip O: lat / lon
+### New York, US
+GET http://api.openweathermap.org/geo/1.0/direct?q=New%20York%2CUS&limit=5&appid=9c7d098bf93aebd491e1ddf7e9ecbb92
+
+### GEOCODING API: // direct geocoding: I: name or zip O: lat / lon
+### Paris, FR
+GET http://api.openweathermap.org/geo/1.0/direct?q=Paris%2CFR&limit=5&appid=9c7d098bf93aebd491e1ddf7e9ecbb92
+
+
+### GeoDB Cities API
+GET https://wft-geo-db.p.rapidapi.com/v1/geo/adminDivisions
+X-RapidAPI-Key: 9264137acbmsh705fcae31d728c1p1b79a4jsn528f649e08b5
+X-RapidAPI-Host: wft-geo-db.p.rapidapi.com
+
+### `${GEO_API_URL}/cities?minPopulation=1000000&namePrefix=${inputValue}`,
+GET https://wft-geo-db.p.rapidapi.com/v1/geo/cities?minPopulation=0&namePrefix=millwood
+X-RapidAPI-Key: 9264137acbmsh705fcae31d728c1p1b79a4jsn528f649e08b5
+X-RapidAPI-Host: wft-geo-db.p.rapidapi.com
+
+
+      
