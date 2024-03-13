@@ -18,14 +18,14 @@ export default function Search({ onSearch, onToggleTempUnits }: SearchProps) {
 
   return (
     <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-      <Box component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-        <form onSubmit={onSearch} style={{ flex: 1 }}>
+      <Box component="div" id="search-form" sx={{ display: 'flex', alignItems: 'center' }}>
+        <form onSubmit={onSearch} style={{ flex: 1, display: 'flex'}}>
           <SearchBar/>
-          <IconButton aria-label="search" type="submit">
+          <IconButton aria-label="search" type="submit" >
             <SearchIcon />
           </IconButton>
         </form>
-        <IconButton onClick={onToggleTempUnits}>
+        <IconButton onClick={onToggleTempUnits} >
           <MoreVertIcon />
         </IconButton>
       </Box>

@@ -51,7 +51,7 @@ export default function SearchBar() {
       loadScript(
         `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
         document.querySelector('head'),
-        'google-maps',
+        'google-maps'
       );
     }
 
@@ -62,17 +62,17 @@ export default function SearchBar() {
     () =>
       debounce(
         (
-          request: { input: string, types: string[]},
-          callback: (results?: readonly PlaceType[]) => void,
+          request: { input: string; types: string[] },
+          callback: (results?: readonly PlaceType[]) => void
         ) => {
           (autocompleteService.current as any).getPlacePredictions(
             { ...request, types: ['(cities)'] },
-            callback,
+            callback
           );
         },
-        400,
+        400
       ),
-    [],
+    []
   );
 
   React.useEffect(() => {
@@ -92,24 +92,27 @@ export default function SearchBar() {
       return undefined;
     }
 
-    fetch({
-      input: inputValue,
-      types: []
-    }, (results?: readonly PlaceType[]) => {
-      if (active) {
-        let newOptions: readonly PlaceType[] = [];
+    fetch(
+      {
+        input: inputValue,
+        types: [],
+      },
+      (results?: readonly PlaceType[]) => {
+        if (active) {
+          let newOptions: readonly PlaceType[] = [];
 
-        if (value) {
-          newOptions = [value];
+          if (value) {
+            newOptions = [value];
+          }
+
+          if (results) {
+            newOptions = [...newOptions, ...results];
+          }
+
+          setOptions(newOptions);
         }
-
-        if (results) {
-          newOptions = [...newOptions, ...results];
-        }
-
-        setOptions(newOptions);
       }
-    });
+    );
 
     return () => {
       active = false;
@@ -118,9 +121,7 @@ export default function SearchBar() {
 
   return (
     <Autocomplete
-      id="google-map-demo" // note
-      // name="search-term"
-      sx={{ width: 300 }} // note
+      // sx={{ width: 300 }} // note
       getOptionLabel={(option) =>
         typeof option === 'string' ? option : option.description
       }
@@ -141,11 +142,13 @@ export default function SearchBar() {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        <TextField {...params} 
-        name="search-term"
-        label="Search for a place..."
-        helperText="Enter name or lattitude and longitude coordinates (e.g. 40.71 74.0)"
-        fullWidth />
+        <TextField
+          {...params}
+          name="search-term"
+          label="Search for a place..."
+          helperText="Enter name or lattitude and longitude coordinates (e.g. 40.71 74.0)"
+          fullWidth
+        />
       )}
       renderOption={(props, option) => {
         const matches =
@@ -153,7 +156,10 @@ export default function SearchBar() {
 
         const parts = parse(
           option.structured_formatting.main_text,
-          matches.map((match: any) => [match.offset, match.offset + match.length]),
+          matches.map((match: any) => [
+            match.offset,
+            match.offset + match.length,
+          ])
         );
 
         const { key, ...rest } = props;
@@ -164,7 +170,10 @@ export default function SearchBar() {
               <Grid item sx={{ display: 'flex', width: 44 }}>
                 <LocationOnIcon sx={{ color: 'text.secondary' }} />
               </Grid>
-              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+              <Grid
+                item
+                sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}
+              >
                 {parts.map((part, index) => (
                   <Box
                     key={index}
