@@ -33,6 +33,8 @@ export default function Current({ currentWeather, tempUnits }: CurrentProps) {
     <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
       {/* date, high and low temp*/}
       <Box component="div" sx={{ m: 0, pl: 2, border: '1px dashed grey' }}>
+        <Typography variant="h6" gutterBottom>New York, NY, USA</Typography>
+        
         {date && <Typography variant="subtitle2">{date}</Typography>}
         {/* <Typography variant="body2"> // note: data  not in current weather. can this be found elsewhere
           Day 47&deg;F &uarr; &bull; Night 39&deg;F &darr;

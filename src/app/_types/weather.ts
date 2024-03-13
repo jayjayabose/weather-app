@@ -1,3 +1,10 @@
+export type FetchWeatherResult = {
+  status: number;
+  message: string;
+  current: CurrentWeather | null;
+  daily: DailyWeather | null;
+};
+
 
 export type CurrentWeather = {
   temp: number;
