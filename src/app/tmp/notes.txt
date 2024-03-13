@@ -1,0 +1,3 @@
+
+check
+ ? remove: npm install --save autosuggest-highlight
