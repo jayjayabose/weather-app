@@ -139,9 +139,6 @@ export default function SearchBar({fetchWeatherResult}: SearchBarProps) {
     }
   }
 
-  console.log('SearchBar fetchWeatherResult', fetchWeatherResult);
-  console.log('SearchBar getHelperText', getHelperText());
-
   return (
     <Autocomplete
       // sx={{ width: 300 }} // note
@@ -170,7 +167,6 @@ export default function SearchBar({fetchWeatherResult}: SearchBarProps) {
           name="search-term"
           label="Search for a place..."
           helperText={getHelperText()}
-          
           fullWidth
         />
       )}
