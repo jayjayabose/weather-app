@@ -12,7 +12,7 @@ export type CurrentWeather = {
   humidity: number;
   windSpeed: number;
   weather: Weather;
-};
+} | null;
 
 export type Weather = {
   id: number;
@@ -39,7 +39,7 @@ export type DailyWeather = {
   wind_deg: number,
   wind_gust: number,
   weather: Weather;
-};
+} | null;
 
 export type Temperature = {
   day: number;

@@ -15,7 +15,7 @@ export default function Daily({ dailyWeather, tempUnits }: DailyProps) {
   return (
     <>
       <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-        {dailyWeather.map((day, index) => <Day key={day.dt} weather={day} tempUnits={tempUnits}/>)}
+        {dailyWeather.map((day, index) => <Day key={day?.dt} weather={day} tempUnits={tempUnits}/>)}
       </Box>
     </>
   );
@@ -27,6 +27,9 @@ type DayProps = {
 };
 
 function Day({ weather, tempUnits }: DayProps) {
+  if (!weather) {
+    return null;
+  }
   const date = new Date(weather.dt * 1000);
   const formattedDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
   const iconUrl = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`

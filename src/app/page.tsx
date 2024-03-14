@@ -8,45 +8,14 @@ import Daily from './_components/daily';
 import { CurrentWeather, DailyWeather } from './_types/weather';
 import { fetchWeather } from './_utils/services';
 
-import { currentData, dailyData } from 'utils/dummyData'; // note: tmp
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-
-const DEFAULT_LOCATION = 'New York, NY, US';
-
-// note: no type is needed for fetchResult??
-// type Repo = {
-//   name: string
-//   stargazers_count: number
-// }
-
-/*
-type FetchResult {
-  current: CurrentWeather;
-  daily: DailyWeather;
-
-}
- 
-export const getServerSideProps = (async () => {
-  // Fetch data from external API
-  // const res = await fetch('https://api.github.com/repos/vercel/next.js')
-  // const repo: Repo = await res.json()
-  const fetchResult = await fetchWeather(DEFAULT_LOCATION);
-  
-  // Pass data to the page via props
-  // return { props: { repo } }
-  return { props: { fetchResult } }
-// }) satisfies GetServerSideProps<{ repo: Repo }>
-}) satisfies GetServerSideProps<{ fetchResult: FetchResult }>
-
-*/
 export default function App() {
   console.log('app appId render');
-  let [currentWeather, setCurrentWeather] =
-    useState<CurrentWeather>(currentData);
-  let [dailyWeather, setDailyWeather] = useState<DailyWeather>(dailyData);
+  let [currentWeather, setCurrentWeather] = useState<CurrentWeather>(null);
+  let [dailyWeather, setDailyWeather] = useState<DailyWeather>(null);
   let [tempUnits, setTempUnits] = useState<'imperial' | 'metric'>('imperial');
+  let weatherDataLoaded = currentWeather && dailyWeather;
 
-  const handleSearch = async (event: Event) => {
+  const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     let searchTerm = event.target?.elements['search-term'].value;
     console.log('app handlSearch', event.target?.elements['search-term'].value);
@@ -74,8 +43,14 @@ export default function App() {
   return (
     <Container maxWidth="md">
       <Search onSearch={handleSearch} onToggleTempUnits={handleToggleTempUnits}/>
-      <Current currentWeather={currentWeather} tempUnits={tempUnits}/>
-      <Daily dailyWeather={dailyWeather} tempUnits={tempUnits}/>
+      
+      {weatherDataLoaded ? <>
+        <Current currentWeather={currentWeather} tempUnits={tempUnits}/>
+        <Daily dailyWeather={dailyWeather} tempUnits={tempUnits}/>
+      </>
+        :
+        <div>Welcome...</div>
+      }
       {/* note: type warning above */}
     </Container>
   );
