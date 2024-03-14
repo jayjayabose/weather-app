@@ -10,15 +10,9 @@ import Typography from '@mui/material/Typography';
 import parse from 'autosuggest-highlight/parse';
 import { debounce } from '@mui/material/utils';
 
+import { FetchWeatherResult } from '../_types/weather';
+
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-const fetchResponseCodeMsg = {
-  200 : "Enter name or lattitude and longitude",
-  // errNoSearchTerm: "Don't forget to enter a search term",
-  404: "No matches found. Need help?",
-  500: "We had a problem. Try again, please.",
-}
-
-
 
 function loadScript(src: string, position: HTMLElement | null, id: string) {
   if (!position) {
@@ -52,7 +46,14 @@ type SearchBarProps = {
   fetchWeatherResult: FetchWeatherResult;
 };
 
-export default function SearchBar({fetchWeatherResult}: SearchBarProps) {
+// note: maybe pull this out to config
+const fetchResponseCodeMsg = {
+  200: 'Enter name or lattitude and longitude',
+  404: 'No matches found. Need help?',
+  500: 'We had a problem. Try again, please.',
+};
+
+export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
   const [value, setValue] = useState<PlaceType | null>(null);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
@@ -135,9 +136,9 @@ export default function SearchBar({fetchWeatherResult}: SearchBarProps) {
     if (fetchWeatherResult === null) {
       return fetchResponseCodeMsg[200];
     } else {
-      return fetchResponseCodeMsg[fetchWeatherResult.status];
+      return fetchResponseCodeMsg[fetchWeatherResult.status as keyof typeof fetchResponseCodeMsg];
     }
-  }
+  };  
 
   return (
     <Autocomplete
