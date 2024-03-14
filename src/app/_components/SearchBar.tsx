@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -9,6 +9,8 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import parse from 'autosuggest-highlight/parse';
 import { debounce } from '@mui/material/utils';
+
+import { FetchWeatherResult } from '../_types/weather';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -40,11 +42,22 @@ interface PlaceType {
   structured_formatting: StructuredFormatting;
 }
 
-export default function SearchBar() {
-  const [value, setValue] = React.useState<PlaceType | null>(null);
-  const [inputValue, setInputValue] = React.useState('');
-  const [options, setOptions] = React.useState<readonly PlaceType[]>([]);
-  const loaded = React.useRef(false);
+type SearchBarProps = {
+  fetchWeatherResult: FetchWeatherResult;
+};
+
+// note: maybe pull this out to config
+const fetchResponseCodeMsg = {
+  200: 'Enter name or lattitude and longitude',
+  404: 'No matches found. Need help?',
+  500: 'We had a problem. Try again, please.',
+};
+
+export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
+  const [value, setValue] = useState<PlaceType | null>(null);
+  const [inputValue, setInputValue] = useState('');
+  const [options, setOptions] = useState<readonly PlaceType[]>([]);
+  const loaded = useRef(false);
 
   if (typeof window !== 'undefined' && !loaded.current) {
     if (!document.querySelector('#google-maps')) {
@@ -58,7 +71,7 @@ export default function SearchBar() {
     loaded.current = true;
   }
 
-  const fetch = React.useMemo(
+  const fetch = useMemo(
     () =>
       debounce(
         (
@@ -75,7 +88,7 @@ export default function SearchBar() {
     []
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     let active = true;
 
     if (!autocompleteService.current && (window as any).google) {
@@ -119,6 +132,14 @@ export default function SearchBar() {
     };
   }, [value, inputValue, fetch]);
 
+  const getHelperText = () => {
+    if (fetchWeatherResult === null) {
+      return fetchResponseCodeMsg[200];
+    } else {
+      return fetchResponseCodeMsg[fetchWeatherResult.status as keyof typeof fetchResponseCodeMsg];
+    }
+  };  
+
   return (
     <Autocomplete
       // sx={{ width: 300 }} // note
@@ -146,7 +167,7 @@ export default function SearchBar() {
           {...params}
           name="search-term"
           label="Search for a place..."
-          helperText="Enter name or lattitude and longitude coordinates (e.g. 40.71 74.0)"
+          helperText={getHelperText()}
           fullWidth
         />
       )}
