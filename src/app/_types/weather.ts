@@ -38,7 +38,7 @@ export type DailyWeather = {
   wind_speed: number,
   wind_deg: number,
   wind_gust: number,
-  weather: Weather;
+  weather: Weather[];
 } | null;
 
 export type Temperature = {
