@@ -30,7 +30,7 @@ export default function Current({ currentWeather, tempUnits }: CurrentProps) {
   const iconUrl = `https://openweathermap.org/img/wn/${currentWeather?.weather.icon}@2x.png`;
 
   return (
-    <Box component="section" sx={{ p: 2 border: '1px dashed grey' }}>
+    <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
       {/* date, high and low temp*/}
       <Box component="div" sx={{ m: 0, pl: 2, border: '1px dashed grey' }}>
         <Typography variant="h6" gutterBottom>New York, NY, USA</Typography>
