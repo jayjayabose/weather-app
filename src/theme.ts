@@ -2,6 +2,20 @@
 import { Roboto } from 'next/font/google';
 import { createTheme } from '@mui/material/styles';
 
+declare module '@mui/material/styles' {
+  interface Theme {
+    status: {
+      danger: string;
+    };
+  }
+  // allow configuration using `createTheme`
+  interface ThemeOptions {
+    status?: {
+      danger?: string;
+    };
+  }
+}
+
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
   subsets: ['latin'],
@@ -9,9 +23,23 @@ const roboto = Roboto({
 });
 
 const theme = createTheme({
-  palette: {
+  palette:{
     mode: 'light',
+    background: {
+      default: '#42a5f5'
+    },    
+    primary:{
+      main: "#1760a5",
+      light: "skyblue"
+    },
+    secondary:{
+      main: '#15c630',
+    },
+    otherColor:{
+      main:"#999"
+    }
   },
+
   typography: {
     fontFamily: roboto.style.fontFamily,
   },
@@ -25,6 +53,13 @@ const theme = createTheme({
         }),
       },
     },
+    MuiStack: { // for development
+      styleOverrides: {
+        root: {
+          border: '1px dotted gray',
+        },
+      },
+    },    
   },
 });
 
