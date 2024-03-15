@@ -7,7 +7,7 @@ import { DailyWeather } from '../_types/weather';
 import { displayTempNumber } from '../_utils/services';
 
 type DailyProps = {
-  dailyWeather: DailyWeather[];
+  dailyWeather: DailyWeather[] | null;
   tempUnits: String;
 };
 
@@ -15,7 +15,7 @@ export default function Daily({ dailyWeather, tempUnits }: DailyProps) {
   return (
     <>
       <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-        {dailyWeather.map((day, index) => <Day key={day?.dt} weather={day} tempUnits={tempUnits}/>)}
+        {dailyWeather?.map((day, index) => <Day key={day?.dt} weather={day} tempUnits={tempUnits}/>)}
       </Box>
     </>
   );

@@ -4,7 +4,7 @@ const API_PATH_LAT_LON = process.env.NEXT_PUBLIC_API_PATH_LAT_LON;
 const API_PATH_GEO = process.env.NEXT_PUBLIC_API_PATH_GEO;
 const GEO_RESULT_LIMIT = process.env.NEXT_PUBLIC_GEO_RESULT_LIMIT;
 
-import { FetchWeatherResult } from "../_types/weather";
+import { DailyWeather, FetchWeatherResult } from "../_types/weather";
 
 function displayTempNumber(temp: number, units: String) {
   if (units === 'imperial') {
@@ -74,7 +74,7 @@ async function fetchLatLonByPlaceName(placeName: string): Promise<FetchLatLonRes
       };
     }
   } catch (error) {
-    console.error('error', error.message);
+    console.error('error', error);
     return {
       status: 500,
       message: `API server error occured while getting lattitude longitude coordinates for search term`,
@@ -128,7 +128,7 @@ async function fetchWeather(searchTerm: string): Promise<FetchWeatherResult> {
       weather: data.current.weather[0],
     };
 
-    let daily = data.daily.filter((day, i) => {
+    let daily = data.daily.filter((_:DailyWeather, i: number) => {
       return i > 0 && i <= 5;
     });
 
@@ -137,7 +137,7 @@ async function fetchWeather(searchTerm: string): Promise<FetchWeatherResult> {
 
     return { status: 200, message: 'ok', current, daily };
   } catch (error) {
-    console.error('error', error.message);
+    console.error('error', error);
     return {
       status: 500,
       message: 'API server error occured while getting weather data',

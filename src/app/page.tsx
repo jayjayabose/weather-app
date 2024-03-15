@@ -20,14 +20,14 @@ export default function App() {
   let [fetchWeatherResult, setFetchWeatherResult] =
     useState<FetchWeatherResult | null>(null);
   let [currentWeather, setCurrentWeather] = useState<CurrentWeather>(null);
-  let [dailyWeather, setDailyWeather] = useState<DailyWeather>(null);
+  let [dailyWeather, setDailyWeather] = useState<DailyWeather[] | null>(null);
   let [tempUnits, setTempUnits] = useState<'imperial' | 'metric'>('imperial');
   let weatherDataLoaded = currentWeather && dailyWeather;
 
-  const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
+const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    let searchTerm = event.target?.elements['search-term'].value;
-    console.log('app handlSearch', event.target?.elements['search-term'].value);
+    const { elements } = (event.target as HTMLFormElement);
+    const searchTerm = (elements[0] as HTMLInputElement).value;
 
     let result = await fetchWeather(searchTerm);
     setFetchWeatherResult(result);

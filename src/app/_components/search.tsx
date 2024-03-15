@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FormEventHandler } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -9,9 +10,9 @@ import SearchBar from './SearchBar';
 import { FetchWeatherResult } from '../_types/weather';
 
 type SearchProps = {
-  onSearch: (event: Event) => Promise<void>;
+  onSearch: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
   onToggleTempUnits: () => void;
-  fetchWeatherResult: FetchWeatherResult;
+  fetchWeatherResult: FetchWeatherResult | null;
 };
 
 export default function Search({
