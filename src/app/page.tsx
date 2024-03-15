@@ -20,7 +20,7 @@ export default function App() {
   let [fetchWeatherResult, setFetchWeatherResult] =
     useState<FetchWeatherResult | null>(null);
   let [currentWeather, setCurrentWeather] = useState<CurrentWeather>(null);
-  let [dailyWeather, setDailyWeather] = useState<DailyWeather>(null);
+  let [dailyWeather, setDailyWeather] = useState<DailyWeather[] | null>(null);
   let [tempUnits, setTempUnits] = useState<'imperial' | 'metric'>('imperial');
   let weatherDataLoaded = currentWeather && dailyWeather;
 

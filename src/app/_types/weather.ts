@@ -2,7 +2,7 @@ export type FetchWeatherResult = {
   status: number;
   message: string;
   current: CurrentWeather | null;
-  daily: DailyWeather | null;
+  daily: DailyWeather[] | null;
 };
 
 
@@ -39,7 +39,7 @@ export type DailyWeather = {
   wind_deg: number,
   wind_gust: number,
   weather: Weather[];
-} | null;
+};
 
 export type Temperature = {
   day: number;

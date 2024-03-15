@@ -155,7 +155,6 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       noOptionsText="No locations"
       popupIcon={null}
       freeSolo
-      // onChange={(event: any, newValue: PlaceType | null) => {
       // @ts-ignore
       onChange={(event: any, newValue: PlaceType | null) => {
         setOptions(newValue ? [newValue, ...options] : options);
@@ -185,6 +184,7 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
           ])
         );
 
+        // @ts-ignore
         const { key, ...rest } = props;
 
         return (
