@@ -35,9 +35,6 @@ const theme = createTheme({
     secondary:{
       main: '#15c630',
     },
-    otherColor:{
-      main:"#999"
-    }
   },
 
   typography: {

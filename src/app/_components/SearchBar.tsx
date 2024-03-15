@@ -43,7 +43,7 @@ interface PlaceType {
 }
 
 type SearchBarProps = {
-  fetchWeatherResult: FetchWeatherResult;
+  fetchWeatherResult: FetchWeatherResult | null;
 };
 
 // note: maybe pull this out to config
@@ -155,6 +155,7 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       noOptionsText="No locations"
       popupIcon={null}
       freeSolo
+      // @ts-ignore
       onChange={(event: any, newValue: PlaceType | null) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
@@ -183,6 +184,7 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
           ])
         );
 
+        // @ts-ignore
         const { key, ...rest } = props;
 
         return (
