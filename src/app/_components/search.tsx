@@ -14,22 +14,32 @@ type SearchProps = {
   fetchWeatherResult: FetchWeatherResult;
 };
 
-export default function Search({ onSearch, onToggleTempUnits, fetchWeatherResult }: SearchProps) {
+export default function Search({
+  onSearch,
+  onToggleTempUnits,
+  fetchWeatherResult,
+}: SearchProps) {
   let [searchTerm, setSearchTerm] = useState<string>('');
 
   return (
     <Box component="section">
-      <Box component="div" id="search-form" sx={{ display: 'flex', alignItems: 'center' }}>
-        <form onSubmit={onSearch} style={{ flex: 1, display: 'flex'}}>
-          <SearchBar fetchWeatherResult={fetchWeatherResult}/>
-          <IconButton aria-label="search" type="submit" >
-            <SearchIcon />
-          </IconButton>
+      <Stack spacing={1} direction="row" alignItems="flex-start">
+        <form onSubmit={onSearch} style={{ flex: 1, display: 'flex' }}>
+          <Box flex={24}>
+            <SearchBar fetchWeatherResult={fetchWeatherResult} />
+          </Box>
+          <Box>
+            <IconButton aria-label="search" type="submit">
+              <SearchIcon fontSize="large" />
+            </IconButton>
+          </Box>
         </form>
-        <IconButton onClick={onToggleTempUnits} >
-          <MoreVertIcon />
-        </IconButton>
-      </Box>
+        <Box>
+          <IconButton onClick={onToggleTempUnits}>
+            <MoreVertIcon fontSize="large" />
+          </IconButton>
+        </Box>
+      </Stack>
     </Box>
   );
 }
