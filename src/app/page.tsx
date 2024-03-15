@@ -69,7 +69,7 @@ export default function App() {
               <Daily dailyWeather={dailyWeather} tempUnits={tempUnits} />
             </>
           ) : (
-            <div>Welcome...</div>
+            <div>Initial State: going to load a default location.</div>
           )}
           {/* note: type warning above */}
         </Stack>
