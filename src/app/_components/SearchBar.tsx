@@ -14,6 +14,14 @@ import { FetchWeatherResult } from '../_types/weather';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+interface GoogleAutocompleteService {
+  getPlacePredictions: (
+    request: { input: string; types?: string[] },
+    callback: (results?: readonly PlaceType[]) => void
+  ) => void;
+}
+
+
 function loadScript(src: string, position: HTMLElement | null, id: string) {
   if (!position) {
     return;
@@ -26,7 +34,8 @@ function loadScript(src: string, position: HTMLElement | null, id: string) {
   position.appendChild(script);
 }
 
-const autocompleteService = { current: null };
+// const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
+// const autocompleteService = { current: null };
 
 interface MainTextMatchedSubstrings {
   offset: number;
@@ -58,6 +67,8 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
   const loaded = useRef(false);
+  // const autocompleteService = { current: null };
+  const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
 
   if (typeof window !== 'undefined' && !loaded.current) {
     if (!document.querySelector('#google-maps')) {
@@ -155,11 +166,13 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       noOptionsText="No locations"
       popupIcon={null}
       freeSolo
-      // @ts-ignore
+
+      //@ts-ignore
       onChange={(event: any, newValue: PlaceType | null) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
       }}
+
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
@@ -184,11 +197,12 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
           ])
         );
 
-        // @ts-ignore
-        const { key, ...rest } = props;
+        
+        const { key, ...rest } = props as { key: string };
 
         return (
           <li key={key} {...rest}>
+          {/* <li {...props}> */}
             <Grid container alignItems="center">
               <Grid item sx={{ display: 'flex', width: 44 }}>
                 <LocationOnIcon sx={{ color: 'text.secondary' }} />

@@ -1,3 +1,16 @@
+- repo: https://github.com/jayjayabose/weather-app/
+- url: https://weather-9medgirkf-jay-jayaboses-projects.vercel.app/
+
+Working
+-Search
+-Autocomplete
+-Temp units change
+
+Notable Todos
+- Initial State
+- Temp units change interface
+- UI formatting
+
 
 check
  ? remove: npm install --save autosuggest-highlight
@@ -13,6 +26,9 @@ check
    -- interfaciing with the MUI example was pretty involved. e.g. I wanted to limited 'cities'
       -- review the model
 
+ Call API client side rather than server side, to avoide extra hop
+
+ - exposing sensitve data to the client in favor of performance
 
 Latitude ranges from -90 to +90,
 Longitude ranges from -180 to +180. 
