@@ -38,4 +38,5 @@ yarn-error.log*
 
 
 .vscode/
-_dev/
+_dev/notes.txt
+```
