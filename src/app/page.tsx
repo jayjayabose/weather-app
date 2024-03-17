@@ -24,20 +24,18 @@ export default function App() {
   const [tempUnits, setTempUnits] = useState<'imperial' | 'metric'>('imperial');
   const [location, setLocation] = useState<string | null>(null);
 
-  const lastSearchTerm = useRef<string | null>(null);
-
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { elements } = event.target as HTMLFormElement;
     const searchTerm = (elements[0] as HTMLInputElement).value;
-    lastSearchTerm.current = searchTerm;
 
     const result = await fetchWeather(searchTerm);
+
     setFetchWeatherResult(result);
     if (result?.status === 200) {
       result.current && setCurrentWeather(result.current);
       result.daily && setDailyWeather(result.daily);
-      setLocation(lastSearchTerm.current);
+      setLocation(result.placeName);
     }
   };
 
