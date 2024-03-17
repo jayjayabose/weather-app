@@ -37,11 +37,13 @@ interface MainTextMatchedSubstrings {
   offset: number;
   length: number;
 }
+
 interface StructuredFormatting {
   main_text: string;
   secondary_text: string;
   main_text_matched_substrings?: readonly MainTextMatchedSubstrings[];
 }
+
 interface PlaceType {
   description: string;
   structured_formatting: StructuredFormatting;
@@ -51,7 +53,7 @@ type SearchBarProps = {
   fetchWeatherResult: FetchWeatherResult | null;
 };
 
-// note: maybe pull this out to config
+// note: pull this out to config
 const fetchResponseCodeMsg = {
   200: 'Enter name or lattitude and longitude',
   404: 'No matches found. Need help?',
@@ -59,20 +61,16 @@ const fetchResponseCodeMsg = {
 };
 
 export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
-  console.log('SearchBar: render');
-  const [value, setValue] = useState<PlaceType | null>(null);
+  const [value, setValue] = useState<PlaceType | null | ''>(null);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
   const loaded = useRef(false);
   const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
 
   useEffect(() => { 
-    console.log('My Searchbar (after search): useEffect [featchWeatherResult]:', fetchWeatherResult?.status);
     if (fetchWeatherResult?.status === 200) {
       setValue(() => '');
       setInputValue(() => '');
-      console.log('My Searchbar (after search): useEffect: clear value and input value.');
-
     }
   }, [fetchWeatherResult]);
 
@@ -108,7 +106,6 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
   );
 
   useEffect(() => {
-    console.log('given useEffect a; [value, inputValue]:', value, inputValue);
     let active = true;
 
     // load autocomplete service
@@ -122,10 +119,8 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       return undefined;
     }
 
-    // PICKUP POINT.. 
     // if nothing is typed in text box, dondo not query for options
     if (inputValue === '') {
-      console.log('given useEffect - return early: inputValue is empty string return early', value, inputValue);
       setOptions(value ? [value] : []);
       return undefined;
     }
@@ -152,7 +147,6 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
         }
       }
     );
-    console.log('given useEffect b: useEffect [value, inputValue]:', value, inputValue);
     return () => {
       active = false;
     };
@@ -185,14 +179,12 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       //@ts-ignore
       // invoked when user selects an option
       onChange={(event: any, newValue: PlaceType | null) => {
-        console.log('onChange', newValue);
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
       }}
 
       // invoked when user types in the input
       onInputChange={(event, newInputValue) => {
-        console.log('onInputChange', newInputValue);
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (

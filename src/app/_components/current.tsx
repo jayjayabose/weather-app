@@ -7,7 +7,7 @@ import { displayTempNumber, displayTempUnit } from '../_utils/services';
 type CurrentProps = {
   currentWeather: CurrentWeather | null;
   tempUnits: string;
-  location: string;
+  location: string | null;
 };
 
 export default function Current({ currentWeather, tempUnits, location }: CurrentProps) {
