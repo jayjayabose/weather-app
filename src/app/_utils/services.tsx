@@ -3,6 +3,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 const API_PATH_LAT_LON = process.env.NEXT_PUBLIC_API_PATH_LAT_LON;
 const API_PATH_GEO = process.env.NEXT_PUBLIC_API_PATH_GEO;
 const GEO_RESULT_LIMIT = process.env.NEXT_PUBLIC_GEO_RESULT_LIMIT;
+const API_PATH_GEO_REVERSE = process.env.NEXT_PUBLIC_API_PATH_GEO_REVERSE;
 
 import { DailyWeather, FetchWeatherResult } from "../_types/weather";
 
@@ -26,7 +27,7 @@ function isValidLatLon(searchTerm: string) {
     return false;
   }
 
-  let [lat, lon] = terms;
+  const [lat, lon] = terms;
 
   if (isNaN(Number(lat)) || isNaN(Number(lon))) {
     return false;
@@ -51,13 +52,11 @@ type FetchLatLonResult = {
 
 async function fetchLatLonByPlaceName(placeName: string): Promise<FetchLatLonResult> {
   const url = `${API_BASE}/${API_PATH_GEO}?q=${placeName}limit=${GEO_RESULT_LIMIT}&appid=${API_KEY}`;
-  console.log('fetchLatLonByPlaceName', url);
   try {
     // calling Geo PAI
-    let response = await fetch(url);
-    let data = await response.json();
+    const response = await fetch(url);
+    const data = await response.json();
 
-    console.log('fetchLatLonByPlaceName', data);
     if (data.length === 0) {
       return {
         status: 404,
@@ -84,43 +83,95 @@ async function fetchLatLonByPlaceName(placeName: string): Promise<FetchLatLonRes
   }
 }
 
+type FetchPlaceNameResult = {
+  status: number;
+  message: string;
+  placeName: string;
+};
+
+async function fetchPlaceNameByLatLon(latLon: [number, number]): Promise<FetchPlaceNameResult> {
+  const [lat, lon] = latLon;
+  const url = `${API_BASE}/${API_PATH_GEO_REVERSE}?lat=${lat}&lon=${lon}&limit=${GEO_RESULT_LIMIT}&appid=${API_KEY}`;
+  
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.length === 0) {
+      return {
+        status: 404,
+        message: `No place name found for lat lon coordiates: ${lat}, ${lon}`,
+        placeName: '',
+      };
+    } else {
+      const name = data[0].name;
+      const state = data[0].state;
+      const country = data[0].country;
+       
+      const placeName = country === 'US' ? `${name}, ${state}, ${country}` : `${name}, ${country}`;
+
+      return {
+        status: 200,
+        message: `OK`,
+        placeName,
+      };
+    }
+  } catch (error) {
+    console.error('error', error);
+    return {
+      status: 500,
+      message: `API server error occured while getting place name for lattitude longitude coordinates`,
+      placeName: '',
+    };
+  }
+}
 
 async function fetchWeather(searchTerm: string): Promise<FetchWeatherResult> {
-  // probably break this out
+  // note: probably break this out
   let status, message, lat, lon;
-  console.log('fetchWeather', searchTerm);
+
+  // if lat lon search, extract coordinates
   if (isValidLatLon(searchTerm)) {
     searchTerm = searchTerm.trim().replace(/ +/g, ' ');
     [lat, lon] = searchTerm.split(' ');
+
+    // get place name, and replace search term for display to user
+    const result = await fetchPlaceNameByLatLon([Number(lat), Number(lon)]);
+    if (result.status === 200) {
+      searchTerm = result.placeName;
+    }
+
   } else {
-    // attempt to get lat lon based on search term
+    // if place name search, get lat lon from api
     ({ status, message, lat, lon } = await fetchLatLonByPlaceName(searchTerm));
     if (status !== 200) {
-      console.log('fetchWeather', status, message, lat, lon);
       return {
         status,
         message,
+        placeName: searchTerm,
         current: null,
         daily: null,
       };
     }
   }
-
-  const url = `${API_BASE}/${API_PATH_LAT_LON}?lat=${lat}&lon=${lon}&units=imperial&exclude=minutely,hourly&appid=${API_KEY}`;
-
+  
   try {
-    let response = await fetch(url);
-    let data = await response.json();
+    // get weather by lat lon
+    const url = `${API_BASE}/${API_PATH_LAT_LON}?lat=${lat}&lon=${lon}&units=imperial&exclude=minutely,hourly&appid=${API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
     if (response.status !== 200) {
       return {
         status: 500,
         message: 'Unable to retrieve weather data. Please try again later.',
+        placeName: searchTerm,
         current: null,
         daily: null,
       };
     }
 
-    let current = {
+    const current = {
       temp: data.current.temp,
       feelsLike: data.current.feels_like,
       humidity: data.current.humidity,
@@ -128,19 +179,17 @@ async function fetchWeather(searchTerm: string): Promise<FetchWeatherResult> {
       weather: data.current.weather[0],
     };
 
-    let daily = data.daily.filter((_:DailyWeather, i: number) => {
+    const daily = data.daily.filter((_:DailyWeather, i: number) => {
       return i > 0 && i <= 5;
     });
-
-    console.log('daily', daily);
-    console.log('current', current);
-
-    return { status: 200, message: 'ok', current, daily };
+    
+    return { status: 200, message: 'ok', placeName: searchTerm, current, daily };
   } catch (error) {
     console.error('error', error);
     return {
       status: 500,
       message: 'API server error occured while getting weather data',
+      placeName: searchTerm,
       current: null,
       daily: null,
     };

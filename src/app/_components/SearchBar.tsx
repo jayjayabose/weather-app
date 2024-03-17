@@ -14,6 +14,13 @@ import { FetchWeatherResult } from '../_types/weather';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+interface GoogleAutocompleteService {
+  getPlacePredictions: (
+    request: { input: string; types?: string[] },
+    callback: (results?: readonly PlaceType[]) => void
+  ) => void;
+}
+
 function loadScript(src: string, position: HTMLElement | null, id: string) {
   if (!position) {
     return;
@@ -26,17 +33,17 @@ function loadScript(src: string, position: HTMLElement | null, id: string) {
   position.appendChild(script);
 }
 
-const autocompleteService = { current: null };
-
 interface MainTextMatchedSubstrings {
   offset: number;
   length: number;
 }
+
 interface StructuredFormatting {
   main_text: string;
   secondary_text: string;
   main_text_matched_substrings?: readonly MainTextMatchedSubstrings[];
 }
+
 interface PlaceType {
   description: string;
   structured_formatting: StructuredFormatting;
@@ -46,7 +53,7 @@ type SearchBarProps = {
   fetchWeatherResult: FetchWeatherResult | null;
 };
 
-// note: maybe pull this out to config
+// note: pull this out to config
 const fetchResponseCodeMsg = {
   200: 'Enter name or lattitude and longitude',
   404: 'No matches found. Need help?',
@@ -54,11 +61,20 @@ const fetchResponseCodeMsg = {
 };
 
 export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
-  const [value, setValue] = useState<PlaceType | null>(null);
+  const [value, setValue] = useState<PlaceType | null | ''>(null);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
   const loaded = useRef(false);
+  const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
 
+  useEffect(() => { 
+    if (fetchWeatherResult?.status === 200) {
+      setValue(() => '');
+      setInputValue(() => '');
+    }
+  }, [fetchWeatherResult]);
+
+  // load -- note: move this to useEffect
   if (typeof window !== 'undefined' && !loaded.current) {
     if (!document.querySelector('#google-maps')) {
       loadScript(
@@ -71,6 +87,7 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
     loaded.current = true;
   }
 
+  // rate limit calls to autocomplete service
   const fetch = useMemo(
     () =>
       debounce(
@@ -91,20 +108,24 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
   useEffect(() => {
     let active = true;
 
+    // load autocomplete service
     if (!autocompleteService.current && (window as any).google) {
       autocompleteService.current = new (
         window as any
       ).google.maps.places.AutocompleteService();
     }
+
     if (!autocompleteService.current) {
       return undefined;
     }
 
+    // if nothing is typed in text box, dondo not query for options
     if (inputValue === '') {
       setOptions(value ? [value] : []);
       return undefined;
     }
 
+    // get autocomplete results
     fetch(
       {
         input: inputValue,
@@ -126,7 +147,6 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
         }
       }
     );
-
     return () => {
       active = false;
     };
@@ -142,24 +162,28 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
 
   return (
     <Autocomplete
-      // sx={{ width: 300 }} // note
       getOptionLabel={(option) =>
         typeof option === 'string' ? option : option.description
       }
       filterOptions={(x) => x}
       options={options}
       autoComplete
+      // autoHighlight
       includeInputInList
       filterSelectedOptions
       value={value}
       noOptionsText="No locations"
       popupIcon={null}
       freeSolo
-      // @ts-ignore
+
+      //@ts-ignore
+      // invoked when user selects an option
       onChange={(event: any, newValue: PlaceType | null) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
       }}
+
+      // invoked when user types in the input
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
@@ -184,8 +208,8 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
           ])
         );
 
-        // @ts-ignore
-        const { key, ...rest } = props;
+        
+        const { key, ...rest } = props as { key: string };
 
         return (
           <li key={key} {...rest}>

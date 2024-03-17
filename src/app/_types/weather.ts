@@ -1,6 +1,7 @@
 export type FetchWeatherResult = {
   status: number;
   message: string;
+  placeName: string,
   current: CurrentWeather | null;
   daily: DailyWeather[] | null;
 };
