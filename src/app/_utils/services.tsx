@@ -127,7 +127,7 @@ async function fetchPlaceNameByLatLon(latLon: [number, number]): Promise<FetchPl
 }
 
 async function fetchWeather(searchTerm: string): Promise<FetchWeatherResult> {
-  // note:probably break this out
+  // note: probably break this out
   let status, message, lat, lon;
 
   // if lat lon search, extract coordinates
@@ -137,7 +137,6 @@ async function fetchWeather(searchTerm: string): Promise<FetchWeatherResult> {
 
     // get place name, and replace search term for display to user
     const result = await fetchPlaceNameByLatLon([Number(lat), Number(lon)]);
-    console.log('featPlaceNameByLatLon result', result);
     if (result.status === 200) {
       searchTerm = result.placeName;
     }
@@ -184,7 +183,6 @@ async function fetchWeather(searchTerm: string): Promise<FetchWeatherResult> {
       return i > 0 && i <= 5;
     });
     
-    console.log('fetchWeather success: searchTerm', searchTerm)
     return { status: 200, message: 'ok', placeName: searchTerm, current, daily };
   } catch (error) {
     console.error('error', error);
