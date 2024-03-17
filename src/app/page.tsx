@@ -24,22 +24,19 @@ export default function App() {
   const [tempUnits, setTempUnits] = useState<'imperial' | 'metric'>('imperial');
   const [location, setLocation] = useState<string | null>(null);
 
-  const lastSearchTerm = useRef<string | null>(null);
-
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { elements } = event.target as HTMLFormElement;
     const searchTerm = (elements[0] as HTMLInputElement).value;
-    lastSearchTerm.current = searchTerm;
 
     const result = await fetchWeather(searchTerm);
-    console.log('page: result', result);
+
     setFetchWeatherResult(result);
     if (result?.status === 200) {
       result.current && setCurrentWeather(result.current);
       result.daily && setDailyWeather(result.daily);
-      setLocation(lastSearchTerm.current);
-    } 
+      setLocation(result.placeName);
+    }
   };
 
   const handleToggleTempUnits = () => {
@@ -53,7 +50,7 @@ export default function App() {
   useEffect(() => {
     (async () => {
       const result = await fetchWeather(DEFAULT_LOCATION);
-      
+
       if (result?.status === 200) {
         result.current && setCurrentWeather(result.current);
         result.daily && setDailyWeather(result.daily);
@@ -71,8 +68,8 @@ export default function App() {
         <Search
           onSearch={handleSearch}
           onToggleTempUnits={handleToggleTempUnits}
+          tempUnits={tempUnits}
           fetchWeatherResult={fetchWeatherResult}
-          // location={location}
         />
         <p>Loading...</p>
       </>
@@ -84,13 +81,17 @@ export default function App() {
       <Search
         onSearch={handleSearch}
         onToggleTempUnits={handleToggleTempUnits}
+        tempUnits={tempUnits}
         fetchWeatherResult={fetchWeatherResult}
-        // location={location}
       />
 
-      {intialLoadSucceeded === true ? ( // change this?
+      {intialLoadSucceeded === true ? ( // note: change this?
         <>
-          <Current currentWeather={currentWeather} tempUnits={tempUnits} location={location} />
+          <Current
+            currentWeather={currentWeather}
+            tempUnits={tempUnits}
+            location={location}
+          />
           <Daily dailyWeather={dailyWeather} tempUnits={tempUnits} />
         </>
       ) : (

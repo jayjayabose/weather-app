@@ -52,13 +52,11 @@ type FetchLatLonResult = {
 
 async function fetchLatLonByPlaceName(placeName: string): Promise<FetchLatLonResult> {
   const url = `${API_BASE}/${API_PATH_GEO}?q=${placeName}limit=${GEO_RESULT_LIMIT}&appid=${API_KEY}`;
-  console.log('fetchLatLonByPlaceName', url);
   try {
     // calling Geo PAI
     const response = await fetch(url);
     const data = await response.json();
 
-    console.log('fetchLatLonByPlaceName', data);
     if (data.length === 0) {
       return {
         status: 404,
@@ -99,7 +97,6 @@ async function fetchPlaceNameByLatLon(latLon: [number, number]): Promise<FetchPl
     const response = await fetch(url);
     const data = await response.json();
 
-    console.log('fetchPlaceNameByLatLon', data);
     if (data.length === 0) {
       return {
         status: 404,
@@ -107,7 +104,6 @@ async function fetchPlaceNameByLatLon(latLon: [number, number]): Promise<FetchPl
         placeName: '',
       };
     } else {
-      console.log('fetchPlaceNameByLatLon status 200', data[0].name)
       const name = data[0].name;
       const state = data[0].state;
       const country = data[0].country;
@@ -133,7 +129,6 @@ async function fetchPlaceNameByLatLon(latLon: [number, number]): Promise<FetchPl
 async function fetchWeather(searchTerm: string): Promise<FetchWeatherResult> {
   // note:probably break this out
   let status, message, lat, lon;
-  console.log('fetchWeather', searchTerm);
 
   // if lat lon search, extract coordinates
   if (isValidLatLon(searchTerm)) {
