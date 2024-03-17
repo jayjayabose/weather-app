@@ -1,10 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
-
+import { useState, useEffect, useRef } from 'react';
 import Search from './_components/search';
 import Current from './_components/current';
 import Daily from './_components/daily';
@@ -15,37 +11,37 @@ import {
 } from './_types/weather';
 import { fetchWeather } from './_utils/services';
 
+const DEFAULT_LOCATION = 'New York, NY, USA';
+
 export default function App() {
-  console.log('app appId render');
-  let [fetchWeatherResult, setFetchWeatherResult] =
+  const [intialLoadSucceeded, setintialLoadSucceeded] = useState<
+    boolean | null
+  >(null);
+  const [fetchWeatherResult, setFetchWeatherResult] =
     useState<FetchWeatherResult | null>(null);
-  let [currentWeather, setCurrentWeather] = useState<CurrentWeather>(null);
-  let [dailyWeather, setDailyWeather] = useState<DailyWeather[] | null>(null);
-  let [tempUnits, setTempUnits] = useState<'imperial' | 'metric'>('imperial');
-  let weatherDataLoaded = currentWeather && dailyWeather;
+  const [currentWeather, setCurrentWeather] = useState<CurrentWeather>(null);
+  const [dailyWeather, setDailyWeather] = useState<DailyWeather[] | null>(null);
+  const [tempUnits, setTempUnits] = useState<'imperial' | 'metric'>('imperial');
+  const [location, setLocation] = useState<string | null>(null);
 
-const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
+  const lastSearchTerm = useRef<string | null>(null);
+
+  const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const { elements } = (event.target as HTMLFormElement);
+    const { elements } = event.target as HTMLFormElement;
     const searchTerm = (elements[0] as HTMLInputElement).value;
+    lastSearchTerm.current = searchTerm;
 
-    let result = await fetchWeather(searchTerm);
+    const result = await fetchWeather(searchTerm);
     setFetchWeatherResult(result);
     if (result?.status === 200) {
       result.current && setCurrentWeather(result.current);
       result.daily && setDailyWeather(result.daily);
-    } else {
-      // note: handle error. give the user an indication that the fetch faield
-      console.log(
-        'app handleSearch - show message to user',
-        result.status,
-        result.message
-      );
-    }
+      setLocation(lastSearchTerm.current);
+    } 
   };
 
   const handleToggleTempUnits = () => {
-    console.log('app handleToggleTempUnits', tempUnits);
     if (tempUnits === 'imperial') {
       setTempUnits('metric');
     } else {
@@ -53,27 +49,55 @@ const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     }
   };
 
-  return (
-    <Container maxWidth="md">
-      <Paper elevation={15} sx={{ p: 1 }}>
-        <Stack>
-          <Search
-            onSearch={handleSearch}
-            onToggleTempUnits={handleToggleTempUnits}
-            fetchWeatherResult={fetchWeatherResult}
-          />
+  useEffect(() => {
+    (async () => {
+      const result = await fetchWeather(DEFAULT_LOCATION);
+      
+      if (result?.status === 200) {
+        result.current && setCurrentWeather(result.current);
+        result.daily && setDailyWeather(result.daily);
+        setLocation(DEFAULT_LOCATION);
+        setintialLoadSucceeded(true);
+      } else {
+        setintialLoadSucceeded(false);
+      }
+    })();
+  }, []);
 
-          {weatherDataLoaded ? (
-            <>
-              <Current currentWeather={currentWeather} tempUnits={tempUnits} />
-              <Daily dailyWeather={dailyWeather} tempUnits={tempUnits} />
-            </>
-          ) : (
-            <div>Initial State: going to load a default location.</div>
-          )}
-          {/* note: type warning above */}
-        </Stack>
-      </Paper>
-    </Container>
+  if (intialLoadSucceeded === null) {
+    return (
+      <>
+        <Search
+          onSearch={handleSearch}
+          onToggleTempUnits={handleToggleTempUnits}
+          fetchWeatherResult={fetchWeatherResult}
+          // location={location}
+        />
+        <p>Loading...</p>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Search
+        onSearch={handleSearch}
+        onToggleTempUnits={handleToggleTempUnits}
+        fetchWeatherResult={fetchWeatherResult}
+        // location={location}
+      />
+
+      {intialLoadSucceeded === true ? ( // change this?
+        <>
+          <Current currentWeather={currentWeather} tempUnits={tempUnits} location={location} />
+          <Daily dailyWeather={dailyWeather} tempUnits={tempUnits} />
+        </>
+      ) : (
+        <p>
+          We had a problem retrieving weather data. Try your search in a few
+          moments, please.
+        </p>
+      )}
+    </>
   );
 }

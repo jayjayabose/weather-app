@@ -21,6 +21,7 @@ export default function Daily({ dailyWeather, tempUnits }: DailyProps) {
   );
 }
 
+
 type DayProps = {
   weather: DailyWeather;
   tempUnits: String;

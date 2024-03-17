@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import { FormEventHandler } from 'react';
-
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -20,8 +17,6 @@ export default function Search({
   onToggleTempUnits,
   fetchWeatherResult,
 }: SearchProps) {
-  let [searchTerm, setSearchTerm] = useState<string>('');
-
   return (
     <Box component="section">
       <Stack spacing={1} direction="row" alignItems="flex-start">
