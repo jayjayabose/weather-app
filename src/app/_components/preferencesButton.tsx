@@ -13,12 +13,10 @@ type PreferencesButtonProps = {
 };
 
 function PreferencesButton({onToggleTempUnits, tempUnits}: PreferencesButtonProps) {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
-  
-  function togglePreferencesMenu(event: {
-    currentTarget: React.SetStateAction<null>;
-  }) {
+
+  function togglePreferencesMenu(event: React.MouseEvent<HTMLButtonElement>) {
     if (!preferencesOpen) {
       setAnchorEl(event.currentTarget);
       setPreferencesOpen(true);
@@ -29,7 +27,7 @@ function PreferencesButton({onToggleTempUnits, tempUnits}: PreferencesButtonProp
 
   return (
     <>
-      <IconButton onClick={(event: React.MouseEvent<HTMLButtonElement>) => togglePreferencesMenu(event)}>
+      <IconButton onClick={togglePreferencesMenu}>
         <MoreVertIcon fontSize="large" />
       </IconButton>
       <Menu
