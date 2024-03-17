@@ -33,6 +33,7 @@ export default function App() {
     lastSearchTerm.current = searchTerm;
 
     const result = await fetchWeather(searchTerm);
+    console.log('page: result', result);
     setFetchWeatherResult(result);
     if (result?.status === 200) {
       result.current && setCurrentWeather(result.current);
