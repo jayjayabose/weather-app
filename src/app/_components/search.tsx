@@ -2,21 +2,24 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SearchBar from './SearchBar';
+import PreferencesButton from './preferencesButton';
 import { FetchWeatherResult } from '../_types/weather';
 
 type SearchProps = {
   onSearch: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
   onToggleTempUnits: () => void;
+  tempUnits: string;
   fetchWeatherResult: FetchWeatherResult | null;
 };
 
-export default function Search({
+function Search({
   onSearch,
   onToggleTempUnits,
+  tempUnits,
   fetchWeatherResult,
 }: SearchProps) {
+
   return (
     <Box component="section">
       <Stack spacing={1} direction="row" alignItems="flex-start">
@@ -31,11 +34,11 @@ export default function Search({
           </Box>
         </form>
         <Box>
-          <IconButton onClick={onToggleTempUnits}>
-            <MoreVertIcon fontSize="large" />
-          </IconButton>
+          <PreferencesButton onToggleTempUnits={onToggleTempUnits} tempUnits={tempUnits}/>
         </Box>
       </Stack>
     </Box>
   );
 }
+
+export default Search;
