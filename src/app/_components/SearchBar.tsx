@@ -21,7 +21,6 @@ interface GoogleAutocompleteService {
   ) => void;
 }
 
-
 function loadScript(src: string, position: HTMLElement | null, id: string) {
   if (!position) {
     return;
@@ -33,9 +32,6 @@ function loadScript(src: string, position: HTMLElement | null, id: string) {
   script.src = src;
   position.appendChild(script);
 }
-
-// const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
-// const autocompleteService = { current: null };
 
 interface MainTextMatchedSubstrings {
   offset: number;
@@ -63,13 +59,24 @@ const fetchResponseCodeMsg = {
 };
 
 export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
+  console.log('SearchBar: render');
   const [value, setValue] = useState<PlaceType | null>(null);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
   const loaded = useRef(false);
-  // const autocompleteService = { current: null };
   const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
 
+  useEffect(() => { 
+    console.log('My Searchbar (after search): useEffect [featchWeatherResult]:', fetchWeatherResult?.status);
+    if (fetchWeatherResult?.status === 200) {
+      setValue(() => '');
+      setInputValue(() => '');
+      console.log('My Searchbar (after search): useEffect: clear value and input value.');
+
+    }
+  }, [fetchWeatherResult]);
+
+  // load -- note: move this to useEffect
   if (typeof window !== 'undefined' && !loaded.current) {
     if (!document.querySelector('#google-maps')) {
       loadScript(
@@ -82,6 +89,7 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
     loaded.current = true;
   }
 
+  // rate limit calls to autocomplete service
   const fetch = useMemo(
     () =>
       debounce(
@@ -100,22 +108,29 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
   );
 
   useEffect(() => {
+    console.log('given useEffect a; [value, inputValue]:', value, inputValue);
     let active = true;
 
+    // load autocomplete service
     if (!autocompleteService.current && (window as any).google) {
       autocompleteService.current = new (
         window as any
       ).google.maps.places.AutocompleteService();
     }
+
     if (!autocompleteService.current) {
       return undefined;
     }
 
+    // PICKUP POINT.. 
+    // if nothing is typed in text box, dondo not query for options
     if (inputValue === '') {
+      console.log('given useEffect - return early: inputValue is empty string return early', value, inputValue);
       setOptions(value ? [value] : []);
       return undefined;
     }
 
+    // get autocomplete results
     fetch(
       {
         input: inputValue,
@@ -137,7 +152,7 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
         }
       }
     );
-
+    console.log('given useEffect b: useEffect [value, inputValue]:', value, inputValue);
     return () => {
       active = false;
     };
@@ -153,13 +168,13 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
 
   return (
     <Autocomplete
-      // sx={{ width: 300 }} // note
       getOptionLabel={(option) =>
         typeof option === 'string' ? option : option.description
       }
       filterOptions={(x) => x}
       options={options}
       autoComplete
+      // autoHighlight
       includeInputInList
       filterSelectedOptions
       value={value}
@@ -168,12 +183,16 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       freeSolo
 
       //@ts-ignore
+      // invoked when user selects an option
       onChange={(event: any, newValue: PlaceType | null) => {
+        console.log('onChange', newValue);
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
       }}
 
+      // invoked when user types in the input
       onInputChange={(event, newInputValue) => {
+        console.log('onInputChange', newInputValue);
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
@@ -202,7 +221,6 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
 
         return (
           <li key={key} {...rest}>
-          {/* <li {...props}> */}
             <Grid container alignItems="center">
               <Grid item sx={{ display: 'flex', width: 44 }}>
                 <LocationOnIcon sx={{ color: 'text.secondary' }} />

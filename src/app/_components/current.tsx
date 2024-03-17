@@ -6,10 +6,11 @@ import { displayTempNumber, displayTempUnit } from '../_utils/services';
 
 type CurrentProps = {
   currentWeather: CurrentWeather | null;
-  tempUnits: String;
+  tempUnits: string;
+  location: string;
 };
 
-export default function Current({ currentWeather, tempUnits }: CurrentProps) {
+export default function Current({ currentWeather, tempUnits, location }: CurrentProps) {
   const [date, setDate] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function Current({ currentWeather, tempUnits }: CurrentProps) {
     <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
       {/* date, high and low temp*/}
       <Box component="div" sx={{ m: 0, pl: 2, border: '1px dashed grey' }}>
-        <Typography variant="h6" gutterBottom>New York, NY, USA</Typography>
+        <Typography variant="h6" gutterBottom>{location}</Typography>
         
         {date && <Typography variant="subtitle2">{date}</Typography>}
         {/* <Typography variant="body2"> // note: data  not in current weather. can this be found elsewhere
