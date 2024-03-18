@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { CircularProgress } from '@mui/material';
+import { Box } from '@mui/system';
 import Search from './_components/search';
 import Current from './_components/current';
 import Daily from './_components/daily';
@@ -71,7 +73,18 @@ export default function App() {
           tempUnits={tempUnits}
           fetchWeatherResult={fetchWeatherResult}
         />
-        <p>Loading...</p>
+        <Box
+          component="div"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height={800}
+        >
+          <Box component="div" textAlign="center">
+          <CircularProgress color="primary" variant="indeterminate" />
+          <p>Loading weather data...</p>
+          </Box>
+        </Box>
       </>
     );
   }
