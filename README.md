@@ -5,10 +5,10 @@
 WeatherApp is a user-friendly weather application that provides real-time weather information for locations worldwide. 
 
 ### Features
-- Search for weather information by city or lattitude and longitutude coordinates supplied in decimal degrees (e.g. 41.403, 2.174)
+- Search for weather information by city or latitude and longitude coordinates supplied in decimal degrees (e.g. 41.403, 2.174)
 - View current weather conditions including temperature, humidity, wind speed, and more
 - Get daily forecasts to plan ahead
-- View temperature in fahrenheit or celsius
+- View temperature in fahrenheit or celcius
 
 ## About the app
 ### How It's Made
@@ -21,28 +21,28 @@ Weather App uses the following
 ### Design Considerations
 - Mobile-first. WeatherApp is designed as a mobile-first app. 
 - Client-side rendering. 
-  - To reduce latency API calls are make from the client
-    - A tradeoff of this appraoch is API keys are exposed to the client
-    - I consider this a minor concern for this projeect.
-  - Server side rendering avoids this tradeoff but requires client to relay data to server, thus increasing latency
+  - To reduce latency API calls are made from the client
+    - A tradeoff of this approach is API keys are exposed to the client
+    - I consider this a minor concern for this project.
+  - Server side rendering avoids this tradeoff but requires the client to relay data to the server, thus increasing latency
 - Initial Load Screen. What is presented to the user initially?
   - I decided to load default weather data. Why?
-    - When data loads the user sees weather results and intuitively understand the utility of the app
-    - I considered a "search box" only inital scren
+    - When data loads the user sees weather results and can intuitively understand the utility of the app
+    - I considered a "search box-only" initial screen
       - pros: (i) low latency
       - cons: (i) user must "do work" (e.g. enter search term) before the utility of the app is clear (see above)
-    - I considered initial messaging on "how to use", but decided the interface is simple enought that it's best to enable the user to interact right away.
+    - I considered initial messaging on "how to use", but decided the interface is simple enough that it's best to enable the user to interact right away.
 
 ### Future Work
 - Fix: Google Maps Javascript API is not loading asynchronously.  I belive [this](https://www.npmjs.com/package/@googlemaps/js-api-loader) will resolve the issue.
-- Add support for multiple lattitude and longitude formats
-- Add client side validation of search parameteres
-- Format display of lattitude longitude coordinates in weather results
+- Add support for multiple latitude and longitude formats
+- Add client-side validation of search parameters
+- Format display of latitude and longitude coordinates in weather results
 - Add tests
 
 ## Installation
 ### Dependencies
-If you'd like to build th project locally, you'll need:
+If you'd like to build the project locally, you'll need:
 #### System Requirements
 - [Node.js 18.17](https://nodejs.org/) or later.
 - macOS, Windows (including WSL), and Linux are supported.
@@ -57,7 +57,7 @@ If you'd like to build th project locally, you'll need:
   - Add the OpenWeather API Key to your `.env` file as described below
 
 #### .env file
-- Create a file with tname `.env`
+- Create a file with name `.env`
 - Enter contents as shown below
   - enter your API Key Values where specified
 - Save the file to your project directory
@@ -75,7 +75,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<YOUR_GOOGLE_MAPS
 ### Install Steps:
 If dependencies are satisfied (see above), you can install the application locally by following these steps:
 - Clone the repository from GitHub: `git clone https://github.com/jayjayabose/weather-app/`
-- Create a `.env` file as shown below and save to your project directory
+- Create a `.env` file as shown below and save in your project directory
 - Install dependencies: `npm install`
 - Start the development server: `npm run dev`
 - By default, the app will start on: `http://localhost:3000`
