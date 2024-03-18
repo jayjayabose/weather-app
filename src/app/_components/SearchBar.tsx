@@ -14,7 +14,6 @@ import { FetchWeatherResult } from '../_types/weather';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-
 interface GoogleAutocompleteService {
   getPlacePredictions: (
     request: { input: string; types?: string[] },
@@ -28,7 +27,7 @@ function loadScript(src: string, position: HTMLElement | null, id: string) {
   }
 
   const script = document.createElement('script');
-  script.setAttribute('async', '');
+  script.setAttribute('async', ''); // note: still getting a warning: JavaScript API has been loaded directly without loading=async.
   script.setAttribute('id', id);
   script.src = src;
   position.appendChild(script);
@@ -71,42 +70,41 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
   const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
 
   useEffect(() => {
+    const getHelperText = () => {
+      if (fetchWeatherResult === null) {
+        return fetchResponseCodeMsg[200];
+      } else {
+        return fetchResponseCodeMsg[fetchWeatherResult.status as keyof typeof fetchResponseCodeMsg];
+      }
+    };
+
     // reset text field after successful fetch 
     if (fetchWeatherResult?.status === 200) {
       setValue(() => '');
       setInputValue(() => '');
     }
 
-    // set helper text and color
-    // console.log('debug', fetchWeatherResult, fetchWeatherResult === null, fetchWeatherResult?.status === 200) ;
     const newHelperText = getHelperText();
     const newHelperTextProps = (!fetchWeatherResult || fetchWeatherResult.status === 200) ? {} : { color: 'red' };
     
     sethelperText(newHelperText);
     sethelperTextProps(newHelperTextProps);
-    // console.log('update', newHelperTextProps, newHelperText);
   }, [fetchWeatherResult]);
 
-  const getHelperText = () => {
-    if (fetchWeatherResult === null) {
-      return fetchResponseCodeMsg[200];
-    } else {
-      return fetchResponseCodeMsg[fetchWeatherResult.status as keyof typeof fetchResponseCodeMsg];
-    }
-  };
 
-  // load -- note: move this to useEffect
-  if (typeof window !== 'undefined' && !loaded.current) {
-    if (!document.querySelector('#google-maps')) {
-      loadScript(
-        `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
-        document.querySelector('head'),
-        'google-maps'
-      );
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !loaded.current) {
+      console.log('loading google maps');
+      if (!document.querySelector('#google-maps')) {
+        loadScript(
+          `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
+          document.querySelector('head'),
+          'google-maps'
+        );
+      }
+      loaded.current = true;
     }
-
-    loaded.current = true;
-  }
+  }, [GOOGLE_MAPS_API_KEY])
 
   // rate limit calls to autocomplete service
   const fetch = useMemo(
