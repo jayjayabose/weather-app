@@ -15,7 +15,8 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           <ThemeProvider theme={theme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
-            <Container maxWidth="md">
+            <Container maxWidth="sm">
+            {/* <Container maxWidth="md"> */}
               <Paper elevation={15} sx={{ p: 1 }}>
                 <Stack>{props.children}</Stack>
               </Paper>

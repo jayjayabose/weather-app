@@ -14,7 +14,7 @@ type DailyProps = {
 export default function Daily({ dailyWeather, tempUnits }: DailyProps) {
   return (
     <>
-      <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+      <Box component="section" sx={{ pb: 1, pt: 1 }}>
         {dailyWeather?.map((day, index) => <Day key={day?.dt} weather={day} tempUnits={tempUnits}/>)}
       </Box>
     </>
@@ -46,7 +46,7 @@ function Day({ weather, tempUnits }: DayProps) {
       >
         {/* day left side */}
         <Grid item>
-          <Box component="div" sx={{ p: 2, border: '1px dashed grey' }}>
+          <Box component="div" sx={{ p: 2 }}>
             <Typography variant="subtitle2" gutterBottom>
               {formattedDate}
             </Typography>
@@ -63,7 +63,6 @@ function Day({ weather, tempUnits }: DayProps) {
             id="tmp-right-container"
             sx={{
               p: 2,
-              border: '1px dashed grey',
               display: 'flex',
               alignItems: 'center',
             }}

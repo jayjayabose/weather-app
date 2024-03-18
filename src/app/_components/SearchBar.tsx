@@ -27,7 +27,7 @@ function loadScript(src: string, position: HTMLElement | null, id: string) {
   }
 
   const script = document.createElement('script');
-  script.setAttribute('async', '');
+  script.setAttribute('async', ''); // note: still getting a warning: JavaScript API has been loaded directly without loading=async.
   script.setAttribute('id', id);
   script.src = src;
   position.appendChild(script);
@@ -55,37 +55,56 @@ type SearchBarProps = {
 
 // note: pull this out to config
 const fetchResponseCodeMsg = {
-  200: 'Enter name or lattitude and longitude',
-  404: 'No matches found. Need help?',
+  200: 'Enter name or lattitude and longitude in decimal degrees (e.g 41.403, 2.174)',
+  404: 'No matches found for your search.',
   500: 'We had a problem. Try again, please.',
 };
 
 export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
   const [value, setValue] = useState<PlaceType | null | ''>(null);
   const [inputValue, setInputValue] = useState('');
+  const [helperText, sethelperText] = useState(fetchResponseCodeMsg[200]);
+  const [helperTextProps, sethelperTextProps] = useState({});
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
   const loaded = useRef(false);
   const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
 
-  useEffect(() => { 
+  useEffect(() => {
+    const getHelperText = () => {
+      if (fetchWeatherResult === null) {
+        return fetchResponseCodeMsg[200];
+      } else {
+        return fetchResponseCodeMsg[fetchWeatherResult.status as keyof typeof fetchResponseCodeMsg];
+      }
+    };
+
+    // reset text field after successful fetch 
     if (fetchWeatherResult?.status === 200) {
       setValue(() => '');
       setInputValue(() => '');
     }
+
+    const newHelperText = getHelperText();
+    const newHelperTextProps = (!fetchWeatherResult || fetchWeatherResult.status === 200) ? {} : { color: 'red' };
+    
+    sethelperText(newHelperText);
+    sethelperTextProps(newHelperTextProps);
   }, [fetchWeatherResult]);
 
-  // load -- note: move this to useEffect
-  if (typeof window !== 'undefined' && !loaded.current) {
-    if (!document.querySelector('#google-maps')) {
-      loadScript(
-        `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
-        document.querySelector('head'),
-        'google-maps'
-      );
-    }
 
-    loaded.current = true;
-  }
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !loaded.current) {
+      console.log('loading google maps');
+      if (!document.querySelector('#google-maps')) {
+        loadScript(
+          `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
+          document.querySelector('head'),
+          'google-maps'
+        );
+      }
+      loaded.current = true;
+    }
+  }, [GOOGLE_MAPS_API_KEY])
 
   // rate limit calls to autocomplete service
   const fetch = useMemo(
@@ -151,15 +170,7 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       active = false;
     };
   }, [value, inputValue, fetch]);
-
-  const getHelperText = () => {
-    if (fetchWeatherResult === null) {
-      return fetchResponseCodeMsg[200];
-    } else {
-      return fetchResponseCodeMsg[fetchWeatherResult.status as keyof typeof fetchResponseCodeMsg];
-    }
-  };  
-
+  
   return (
     <Autocomplete
       getOptionLabel={(option) =>
@@ -190,9 +201,12 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       renderInput={(params) => (
         <TextField
           {...params}
+          FormHelperTextProps={{ 
+            sx: helperTextProps
+          }}
           name="search-term"
           label="Search for a place..."
-          helperText={getHelperText()}
+          helperText={helperText}
           fullWidth
         />
       )}

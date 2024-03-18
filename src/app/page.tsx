@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { CircularProgress } from '@mui/material';
+import { Box } from '@mui/system';
 import Search from './_components/search';
 import Current from './_components/current';
 import Daily from './_components/daily';
@@ -62,20 +64,6 @@ export default function App() {
     })();
   }, []);
 
-  if (intialLoadSucceeded === null) {
-    return (
-      <>
-        <Search
-          onSearch={handleSearch}
-          onToggleTempUnits={handleToggleTempUnits}
-          tempUnits={tempUnits}
-          fetchWeatherResult={fetchWeatherResult}
-        />
-        <p>Loading...</p>
-      </>
-    );
-  }
-
   return (
     <>
       <Search
@@ -83,9 +71,21 @@ export default function App() {
         onToggleTempUnits={handleToggleTempUnits}
         tempUnits={tempUnits}
         fetchWeatherResult={fetchWeatherResult}
-      />
-
-      {intialLoadSucceeded === true ? ( // note: change this?
+      ></Search>
+      {intialLoadSucceeded === null ? (
+        <Box
+          component="div"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height={800}
+        >
+          <Box component="div" textAlign="center">
+            <CircularProgress color="primary" variant="indeterminate" />
+            <p>Just a minute...</p>
+          </Box>
+        </Box>
+      ) : intialLoadSucceeded === true ? (
         <>
           <Current
             currentWeather={currentWeather}
@@ -95,10 +95,18 @@ export default function App() {
           <Daily dailyWeather={dailyWeather} tempUnits={tempUnits} />
         </>
       ) : (
-        <p>
-          We had a problem retrieving weather data. Try your search in a few
-          moments, please.
-        </p>
+        <Box
+          component="div"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height={800}
+        >
+          <Box component="div" textAlign="center">
+            <p>We're having a problem getting weather data. </p>
+            <p>Try again in a few moments, please.</p>
+          </Box>
+        </Box>        
       )}
     </>
   );
