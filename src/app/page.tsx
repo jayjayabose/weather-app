@@ -82,7 +82,7 @@ export default function App() {
         >
           <Box component="div" textAlign="center">
           <CircularProgress color="primary" variant="indeterminate" />
-          <p>Loading weather data...</p>
+          <p>Just a minute...</p>
           </Box>
         </Box>
       </>

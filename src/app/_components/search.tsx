@@ -21,7 +21,7 @@ function Search({
 }: SearchProps) {
 
   return (
-    <Box component="section">
+    <Box component="section" sx={{ pb: 1, pt: 1 }}>
       <Stack spacing={1} direction="row" alignItems="flex-start">
         <form onSubmit={onSearch} style={{ flex: 1, display: 'flex' }}>
           <Box flex={24}>
@@ -29,7 +29,7 @@ function Search({
           </Box>
           <Box>
             <IconButton aria-label="search" type="submit">
-              <SearchIcon fontSize="large" />
+              <SearchIcon fontSize="large"/>
             </IconButton>
           </Box>
         </form>

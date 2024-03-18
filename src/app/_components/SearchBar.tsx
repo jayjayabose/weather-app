@@ -14,6 +14,7 @@ import { FetchWeatherResult } from '../_types/weather';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+
 interface GoogleAutocompleteService {
   getPlacePredictions: (
     request: { input: string; types?: string[] },
@@ -56,23 +57,43 @@ type SearchBarProps = {
 // note: pull this out to config
 const fetchResponseCodeMsg = {
   200: 'Enter name or lattitude and longitude',
-  404: 'No matches found. Need help?',
+  404: 'No matches found for your search.',
   500: 'We had a problem. Try again, please.',
 };
 
 export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
   const [value, setValue] = useState<PlaceType | null | ''>(null);
   const [inputValue, setInputValue] = useState('');
+  const [helperText, sethelperText] = useState(fetchResponseCodeMsg[200]);
+  const [helperTextProps, sethelperTextProps] = useState({});
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
   const loaded = useRef(false);
   const autocompleteService = useRef<GoogleAutocompleteService | null>(null); 
 
-  useEffect(() => { 
+  useEffect(() => {
+    // reset text field after successful fetch 
     if (fetchWeatherResult?.status === 200) {
       setValue(() => '');
       setInputValue(() => '');
     }
+
+    // set helper text and color
+    // console.log('debug', fetchWeatherResult, fetchWeatherResult === null, fetchWeatherResult?.status === 200) ;
+    const newHelperText = getHelperText();
+    const newHelperTextProps = (!fetchWeatherResult || fetchWeatherResult.status === 200) ? {} : { color: 'red' };
+    
+    sethelperText(newHelperText);
+    sethelperTextProps(newHelperTextProps);
+    // console.log('update', newHelperTextProps, newHelperText);
   }, [fetchWeatherResult]);
+
+  const getHelperText = () => {
+    if (fetchWeatherResult === null) {
+      return fetchResponseCodeMsg[200];
+    } else {
+      return fetchResponseCodeMsg[fetchWeatherResult.status as keyof typeof fetchResponseCodeMsg];
+    }
+  };
 
   // load -- note: move this to useEffect
   if (typeof window !== 'undefined' && !loaded.current) {
@@ -151,15 +172,7 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       active = false;
     };
   }, [value, inputValue, fetch]);
-
-  const getHelperText = () => {
-    if (fetchWeatherResult === null) {
-      return fetchResponseCodeMsg[200];
-    } else {
-      return fetchResponseCodeMsg[fetchWeatherResult.status as keyof typeof fetchResponseCodeMsg];
-    }
-  };  
-
+  
   return (
     <Autocomplete
       getOptionLabel={(option) =>
@@ -190,9 +203,12 @@ export default function SearchBar({ fetchWeatherResult }: SearchBarProps) {
       renderInput={(params) => (
         <TextField
           {...params}
+          FormHelperTextProps={{ 
+            sx: helperTextProps
+          }}
           name="search-term"
           label="Search for a place..."
-          helperText={getHelperText()}
+          helperText={helperText}
           fullWidth
         />
       )}
