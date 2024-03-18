@@ -55,7 +55,7 @@ type SearchBarProps = {
 
 // note: pull this out to config
 const fetchResponseCodeMsg = {
-  200: 'Enter name or lattitude and longitude',
+  200: 'Enter name or lattitude and longitude in decimal degrees (e.g 41.403, 2.174)',
   404: 'No matches found for your search.',
   500: 'We had a problem. Try again, please.',
 };
