@@ -34,9 +34,10 @@ Weather App uses the following
     - I considered initial messaging on "how to use", but decided the interface is simple enought that it's best to enable the user to interact right away.
 
 ### Future Work
+- Fix: Google Maps Javascript API is not loading asynchronously.  I belive [this](https://www.npmjs.com/package/@googlemaps/js-api-loader) will resolve the issue.
 - Add support for multiple lattitude and longitude formats
-- Add client side validatin of search parameteres
-- Format display of lattitude longitude coordinates in weather resultts
+- Add client side validation of search parameteres
+- Format display of lattitude longitude coordinates in weather results
 - Add tests
 
 ## Installation
